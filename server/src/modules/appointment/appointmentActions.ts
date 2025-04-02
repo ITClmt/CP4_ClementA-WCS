@@ -1,26 +1,18 @@
 import type { RequestHandler } from "express";
 import Appointment from "../../../database/models/appointment.model";
 
-const isValidTimeSlot = (date: Date) => {
-    const appointmentDate = new Date(date);
-    const hours = appointmentDate.getHours();
-    const minutes = appointmentDate.getMinutes();
-  
-    // Heures valides : 9h-12h et 14h-17h
+const isValidTimeSlot = (dateString: string) => {
+    const date = new Date(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
     const validHours = [9, 10, 11, 14, 15, 16];
    
-    
-    // Vérifie si l'heure est valide
     const isValidHour = validHours.includes(hours)
     const isValidMinute = minutes === 0 || minutes === 30;
   
-    // Pas de RDV entre 12h et 14h
-    if (hours >= 12 && hours < 14) {
-      return false;
-    }
-  
     return isValidHour && isValidMinute;
-  };
+};
   
 const createAppointment: RequestHandler = async (req, res, next) => {
     try {
@@ -28,6 +20,7 @@ const createAppointment: RequestHandler = async (req, res, next) => {
   
       if (!clientName || !clientEmail || !date) {
         res.status(400).json({ error: "Tous les champs sont requis" });
+        return;
       }
 
       if (!isValidTimeSlot(date)) {
@@ -36,24 +29,47 @@ const createAppointment: RequestHandler = async (req, res, next) => {
       }
 
       const existingAppointment = await Appointment.findOne({ date });
+
       if (existingAppointment) {
         res.status(400).json({ error: "Un rendez-vous existe déjà à cette date" });
         return;
       }
-  
-      const appointment = new Appointment({ clientName, clientEmail, date });
-  
-      await appointment.save();
-      res.status(201).json({ message: "Rendez-vous créé avec succès", appointment });
+      
+      const appointment = await Appointment.insertOne({clientName, clientEmail, date});
+
+      // Format the response date in local timezone
+      const responseAppointment = {
+        ...appointment.toObject(),
+        date: appointment.date.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+          dateStyle: 'full',
+          timeStyle: 'short'
+        })
+      };
+      
+      res.status(201).json({ 
+        message: "Rendez-vous créé avec succès", 
+        appointment: responseAppointment 
+      });
     } catch (error) {
       next(error);
     }
-  };
+};
 
   const readAppointments: RequestHandler = async (req, res, next) => {
     try {
       const appointments = await Appointment.find().sort({ date: 1 }); // Trier par date
-      res.json(appointments);
+
+      const responseAppointments = appointments.map(appointment => ({
+        ...appointment.toObject(),
+        date: appointment.date.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+          dateStyle: 'full',
+          timeStyle: 'short'
+        })
+      }));
+
+      res.json(responseAppointments);
     } catch (error) {
       next(error);
     }
@@ -67,8 +83,17 @@ const createAppointment: RequestHandler = async (req, res, next) => {
         res.status(404).json({ error: "Rendez-vous non trouvé" });
         return;
       }
-  
-      res.json(appointment);
+
+      const responseAppointment = {
+        ...appointment.toObject(),
+        date: appointment.date.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+          dateStyle: 'full',
+          timeStyle: 'short'
+        })
+      };
+
+      res.json(responseAppointment);
     } catch (error) {
       next(error);
     }
@@ -89,7 +114,16 @@ const createAppointment: RequestHandler = async (req, res, next) => {
       if (status) appointment.status = status;
   
       await appointment.save();
-      res.json({ message: "Rendez-vous mis à jour", appointment });
+
+      const responseAppointment = {
+        ...appointment.toObject(),
+        date: appointment.date.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+          dateStyle: 'full',
+          timeStyle: 'short'
+        })
+      };
+      res.json({ message: "Rendez-vous mis à jour", appointment: responseAppointment });
     } catch (error) {
       next(error);
     }
