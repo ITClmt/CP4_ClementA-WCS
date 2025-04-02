@@ -35,7 +35,8 @@ const createAppointment: RequestHandler = async (req, res, next) => {
         return;
       }
       
-      const appointment = await Appointment.insertOne({clientName, clientEmail, date});
+      const appointment = new Appointment({ clientName, clientEmail, date });
+      await appointment.save();
 
       // Format the response date in local timezone
       const responseAppointment = {
