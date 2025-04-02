@@ -43,13 +43,16 @@ const userSchema = new Schema<IUser>({
 
 // 🔐 Hash password before saving user
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+    if (!this.isModified("password")) {
+        next();
+    }
+
     this.password = await argon2.hash(this.password, hashingOptions);
     next();
   });
   
   // 🔐 Vérification du mot de passe
-  userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+  userSchema.methods.comparePassword = async function (candidatePassword: string) {
     return await argon2.verify(this.password, candidatePassword);
   };
 

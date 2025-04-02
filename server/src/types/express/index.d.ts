@@ -7,7 +7,12 @@ declare global {
       /* ************************************************************************* */
       // Add your custom properties here, for example:
       //
-      // user?: { ... }
+      user?: { 
+        id: string;
+        name: string;
+        email: string;
+        isAdmin: boolean;
+      }
       /* ************************************************************************* */
     }
   }

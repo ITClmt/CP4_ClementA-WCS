@@ -4,8 +4,9 @@ import "dotenv/config";
 // Check database connection
 // Note: This is optional and can be removed if the database connection
 // is not required when starting the application
-import connectDB from "../database/client";
+import { connectDB, createAdminUser } from "../database/client";
 connectDB();
+createAdminUser();
 
 // Import the Express application from ./app
 import app from "./app";
