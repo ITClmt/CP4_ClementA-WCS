@@ -14,7 +14,7 @@ Le projet est un site fictif permettant de prendre des rendez-vous. Il inclut é
 
 ### Technologies Utilisées
 
-- **Front-end** : React
+- **Front-end** : React, Tailwind CSS
 - **Back-end** : Node.js, Express
 - **Base de Données** : MongoDB 
 - **Authentification** : JWT 
@@ -23,6 +23,8 @@ Le projet est un site fictif permettant de prendre des rendez-vous. Il inclut é
 ### Auteurs
 
 Ce projet a été réalisé individuellement par Clément.A.
+[Linkedin](https://www.linkedin.com/in/clm-andreani/)
+[Portfolio](https://itclmt-portfolio.vercel.app/)
 
 ### Remerciements
 
