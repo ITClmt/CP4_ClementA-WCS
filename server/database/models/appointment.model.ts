@@ -1,16 +1,21 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IAppointment extends Document {
-  clientName: string;
+  clientFirstName: string;
+  clientLastName: string;
   clientEmail: string;
   date: Date;
   status: 'pending' | 'confirmed' | 'cancelled';
 }
 
 const appointmentSchema = new Schema<IAppointment>({
-  clientName: { 
+  clientFirstName: { 
     type: String, 
     required: true 
+  },
+  clientLastName: { 
+    type: String, 
+    required: true
   },
   clientEmail: { 
     type: String, 

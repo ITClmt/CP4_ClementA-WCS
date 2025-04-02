@@ -2,7 +2,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 import argon2 from 'argon2';
 
 export interface IUser extends Document {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   isAdmin: boolean;
@@ -17,15 +18,23 @@ const hashingOptions = {
   };
 
 const userSchema = new Schema<IUser>({
-  name: { 
+  firstName: { 
     type: String, 
     required: true, 
+    minlength: 2,
+    maxlength: 50
+  },
+  lastName: { 
+    type: String, 
+    required: true, 
+    minlength: 2,
+    maxlength: 50
   },
   email: { 
     type: String, 
     required: true, 
     unique: true,
-    match: [/.+\@.+\..+/, "Please fill a valid email address"],
+    match: [/.+\@.+\..+/, "Veuillez entrer une adresse email valide"],
     lowercase: true
   },
   password: { 

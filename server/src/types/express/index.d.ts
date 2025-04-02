@@ -9,7 +9,8 @@ declare global {
       //
       user?: { 
         id: string;
-        name: string;
+        firstName: string;
+        lastName: string;
         email: string;
         isAdmin: boolean;
       }

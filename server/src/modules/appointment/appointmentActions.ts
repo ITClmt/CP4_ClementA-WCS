@@ -16,9 +16,10 @@ const isValidTimeSlot = (dateString: string) => {
   
 const createAppointment: RequestHandler = async (req, res, next) => {
     try {
-      const { clientName, clientEmail, date } = req.body;
-  
-      if (!clientName || !clientEmail || !date) {
+      const { date } = req.body;
+      const user = req.user;
+
+      if (!user || !date) {
         res.status(400).json({ error: "Tous les champs sont requis" });
         return;
       }
@@ -35,7 +36,7 @@ const createAppointment: RequestHandler = async (req, res, next) => {
         return;
       }
       
-      const appointment = new Appointment({ clientName, clientEmail, date });
+      const appointment = new Appointment({ clientFirstName: user.firstName, clientLastName: user.lastName, clientEmail: user.email, date });
       await appointment.save();
 
       // Format the response date in local timezone
@@ -100,6 +101,34 @@ const createAppointment: RequestHandler = async (req, res, next) => {
     }
   };
 
+  const readAppointmentsByEmail: RequestHandler = async (req, res, next) => {
+    try {
+      const hasAccessRights = req.user?.isAdmin || req.user?.email === req.params.email;
+      if (!hasAccessRights) {
+        res.status(403).json({ error: "Accès refusé" });
+      }
+
+      const appointments = await Appointment.find({ clientEmail: req.params.email });
+
+      if (!appointments) {
+        res.status(404).json({ error: "Pas de rendez-vous trouvé" });
+      }
+
+      const responseAppointments = appointments.map(appointment => ({
+        ...appointment.toObject(),
+        date: appointment.date.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+          dateStyle: 'full',
+          timeStyle: 'short'
+        })
+      }));
+
+      res.json(responseAppointments);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   const updateAppointment: RequestHandler = async (req, res, next) => {
     try {
       const { date, status } = req.body;
@@ -146,4 +175,28 @@ const createAppointment: RequestHandler = async (req, res, next) => {
     }
   };
 
-export default { createAppointment, readAppointments, readAppointmentById, updateAppointment, deleteAppointment };
+  const deleteUserAppointments: RequestHandler = async (req, res, next) => {
+    try {
+        
+        const appointment = await Appointment.findById(req.params.id);
+
+        if (!appointment) {
+            res.status(404).json({ error: "Rendez-vous non trouvé" });
+            return;
+        }
+
+        const hasAccessRights = req.user?.isAdmin || req.user?.email === appointment?.clientEmail;
+
+        if (!hasAccessRights) {
+            res.status(403).json({ error: "Accès refusé" });
+            return;
+        }
+
+        await appointment.deleteOne();
+        res.json({ message: "Rendez-vous supprimé avec succès" });
+    } catch (error) {
+        next(error);
+    }
+  }
+
+export default { createAppointment, readAppointments, readAppointmentById, readAppointmentsByEmail, updateAppointment, deleteAppointment, deleteUserAppointments };

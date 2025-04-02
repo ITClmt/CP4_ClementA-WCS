@@ -19,15 +19,15 @@ export const connectDB = async (): Promise<void> => {
 export const createAdminUser = async () => {
   const adminExists = await User.findOne({ email: "admin@example.com" });
   if (!adminExists) {
-    const hashedPassword = await argon2.hash("admin1234");
     const admin = new User({
-      name: "Admin",
+      firstName: "Admin",
+      lastName: "01",
       email: "admin@example.com",
-      password: hashedPassword,
+      password: "admin1234",
       isAdmin: true
     });
     await admin.save();
-    console.log(`✅ Admin créé : ${admin.email} / ${hashedPassword}`);
+    console.log(`✅ Admin créé : ${admin.email}`);
   }
 };
 

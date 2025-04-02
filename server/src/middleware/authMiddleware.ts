@@ -21,7 +21,8 @@ const verify: RequestHandler = async (req, res, next) => {
   
       req.user = {
         id: resultPayload.userId,
-        name: resultPayload.name,
+        firstName: resultPayload.firstName,
+        lastName: resultPayload.lastName,
         email: resultPayload.email,
         isAdmin: resultPayload.isAdmin,
       };
