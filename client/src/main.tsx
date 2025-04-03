@@ -1,7 +1,7 @@
 // Import necessary modules from React and React Router
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router";
+import { Navigate, RouterProvider, createBrowserRouter } from "react-router";
 
 /* ************************************************************************* */
 
@@ -16,6 +16,11 @@ import App from "./App";
 import DashboardUser from "./pages/DashboardUser";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import { AuthProvider } from "./services/AuthContext";
+import DashboardAdmin from "./pages/DashboardAdmin";
+import LoginPageAdmin from "./pages/admin/LoginPageAdmin";
+// API routes
+import api from "./services/api";
 
 /* ************************************************************************* */
 
@@ -37,6 +42,21 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/user",
         element: <DashboardUser />,
+        loader: async () => {
+          const appointments = await api.getAppointmentsByEmail(
+            JSON.parse(localStorage.getItem("CP4user") || "{}").email,
+          );
+          return appointments;
+        },
+        errorElement: <Navigate to="/dashboard/user" />,
+      },
+      {
+        path: "/login/admin",
+        element: <LoginPageAdmin />,
+      },
+      {
+        path: "/dashboard/admin",
+        element: <DashboardAdmin />,
       },
     ],
   },
@@ -54,7 +74,9 @@ if (rootElement == null) {
 // Render the app inside the root element
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 );
 

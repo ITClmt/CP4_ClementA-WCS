@@ -1,7 +1,9 @@
 import { useState } from "react";
 import api from "../services/api";
+import { useRevalidator } from "react-router";
 
 export default function TakeAppointment() {
+  const revalidator = useRevalidator();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
@@ -39,16 +41,11 @@ export default function TakeAppointment() {
 
   // Convertir la date et l'heure au format UTC+2
   const formatDateTimeUTC2 = (date: string, time: string) => {
-    // Combine la date et l'heure
     const [year, month, day] = date.split("-");
     const [hours, minutes] = time.split(":");
 
-    // Créer un objet Date avec la date et l'heure locales (qui seront interprétées en UTC+2)
     const dateObj = new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 
-    // Formater en ISO string mais ajuster pour UTC+2
-    // Notez: ceci est une simplification, pour une implémentation complète
-    // il faudrait gérer correctement les changements d'heure d'été/hiver
     return dateObj.toISOString();
   };
 
@@ -63,24 +60,20 @@ export default function TakeAppointment() {
         const dateTimeUTC2 = formatDateTimeUTC2(selectedDate, selectedTime);
 
         // Appel API pour créer le rendez-vous
-        const appointment = await api.createAppointment(dateTimeUTC2);
-        console.log(appointment);
+        await api.createAppointment(dateTimeUTC2);
 
         setAppointmentDetails({
           date: selectedDate,
           time: selectedTime,
         });
         setBookingConfirmed(true);
-        console.log(
-          "Rendez-vous confirmé!",
-          selectedDate,
-          selectedTime,
-          "UTC+2:",
-          dateTimeUTC2,
-        );
+        revalidator.revalidate();
       } catch (error) {
-        console.error("Erreur lors de la création du rendez-vous:", error);
-        alert("Une erreur est survenue lors de la prise de rendez-vous");
+        if (error instanceof Error) {
+          alert(error.message);
+        } else {
+          alert("Une erreur est survenue lors de la prise de rendez-vous");
+        }
       } finally {
         setIsSubmitting(false);
       }
@@ -89,7 +82,6 @@ export default function TakeAppointment() {
     }
   };
 
-  // Réinitialiser le formulaire
   const resetForm = () => {
     setSelectedDate("");
     setSelectedTime("");

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -67,6 +67,9 @@ const createAppointment = async (date: string) => {
     );
     return response.data;
   } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
     throw new Error("Failed to create appointment");
   }
 };
@@ -82,10 +85,49 @@ const getAppointmentsByEmail = async (email: string) => {
   }
 };
 
+const deleteAppointment = async (id: string) => {
+  try {
+    const response = await axios.delete(
+      `${baseURL}/api/users/appointments/${id}`,
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to delete appointment");
+  }
+};
+
+// Admin routes
+
+const loginAdmin = async (email: string, password: string) => {
+  try {
+    const response = await axios.post(
+      `${baseURL}/api/auth/login`,
+      {
+        email,
+        password,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+    throw new Error("Failed to login");
+  }
+};
+
 export default {
   loginUser,
   logoutUser,
   signupUser,
   createAppointment,
   getAppointmentsByEmail,
+  deleteAppointment,
+  loginAdmin,
 };

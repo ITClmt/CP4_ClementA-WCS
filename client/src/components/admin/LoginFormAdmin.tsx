@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 import { useNavigate } from "react-router";
-import useAuth from "../services/AuthContext";
+import useAuth from "../../services/AuthContext";
 
-export default function LoginForm() {
+export default function LoginFormAdmin() {
   const { setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginFormData>({
@@ -13,15 +13,22 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const response = await api.loginUser(loginData.email, loginData.password);
-    setCurrentUser({
-      id: response.id,
-      email: response.email,
-      firstName: response.firstName,
-      lastName: response.lastName,
-      isAdmin: response.isAdmin,
-    });
-    navigate("/dashboard/user");
+    try {
+      const response = await api.loginAdmin(
+        loginData.email,
+        loginData.password,
+      );
+      setCurrentUser({
+        id: response.id,
+        email: response.email,
+        firstName: response.firstName,
+        lastName: response.lastName,
+        isAdmin: response.isAdmin,
+      });
+      navigate("/dashboard/admin");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Une erreur est survenue");
+    }
   };
 
   return (
@@ -30,9 +37,7 @@ export default function LoginForm() {
         <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
           Connectez-vous
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Pour prendre un rendez-vous
-        </p>
+        <p className="mt-2 text-center text-sm text-gray-600">Dashboard Pro</p>
       </div>
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
