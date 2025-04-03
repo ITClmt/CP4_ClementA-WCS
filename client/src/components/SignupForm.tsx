@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router";
+import useAuth from "../services/AuthContext";
 interface SignupFormData {
   firstName: string;
   lastName: string;
@@ -10,6 +11,7 @@ interface SignupFormData {
 }
 
 export default function SignupForm() {
+  const { setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const [signupData, setSignupData] = useState<SignupFormData>({
     firstName: "",
@@ -36,7 +38,13 @@ export default function SignupForm() {
       signupData.email,
       signupData.password,
     );
-    console.log(response);
+    setCurrentUser({
+      id: response.id,
+      email: response.email,
+      firstName: response.firstName,
+      lastName: response.lastName,
+      isAdmin: response.isAdmin,
+    });
     navigate("/dashboard/user");
   };
 

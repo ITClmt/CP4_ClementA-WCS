@@ -17,7 +17,7 @@ import DashboardUser from "./pages/DashboardUser";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import { AuthProvider } from "./services/AuthContext";
-import DashboardAdmin from "./pages/DashboardAdmin";
+import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import LoginPageAdmin from "./pages/admin/LoginPageAdmin";
 // API routes
 import api from "./services/api";
@@ -42,6 +42,7 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/user",
         element: <DashboardUser />,
+
         loader: async () => {
           const appointments = await api.getAppointmentsByEmail(
             JSON.parse(localStorage.getItem("CP4user") || "{}").email,
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/admin",
         element: <DashboardAdmin />,
+        loader: async () => {
+          const appointments = await api.getAppointments();
+          return appointments;
+        },
       },
     ],
   },

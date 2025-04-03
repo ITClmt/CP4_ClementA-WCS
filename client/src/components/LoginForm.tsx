@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import api from "../services/api";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import useAuth from "../services/AuthContext";
 
 export default function LoginForm() {
@@ -26,6 +26,12 @@ export default function LoginForm() {
 
   return (
     <article className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl shadow-lg">
+      <Link
+        to="/"
+        className="text-gray-500 hover:text-gray-600 cursor-pointer text-sm"
+      >
+        Retour
+      </Link>
       <div>
         <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
           Connectez-vous

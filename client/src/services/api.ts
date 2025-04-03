@@ -122,6 +122,43 @@ const loginAdmin = async (email: string, password: string) => {
   }
 };
 
+const getAppointments = async () => {
+  try {
+    const response = await axios.get(`${baseURL}/api/appointments`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to get appointments");
+  }
+};
+
+const updateAppointment = async (id: string, status: string, date: string) => {
+  try {
+    const response = await axios.put(
+      `${baseURL}/api/appointments/${id}`,
+      { status, date },
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to update appointment");
+  }
+};
+
+const deleteAppointmentAdmin = async (id: string) => {
+  try {
+    const response = await axios.delete(`${baseURL}/api/appointments/${id}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to delete appointment");
+  }
+};
+
 export default {
   loginUser,
   logoutUser,
@@ -130,4 +167,7 @@ export default {
   getAppointmentsByEmail,
   deleteAppointment,
   loginAdmin,
+  getAppointments,
+  updateAppointment,
+  deleteAppointmentAdmin,
 };

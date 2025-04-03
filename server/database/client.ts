@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import User from './models/user.model';
-import argon2 from 'argon2';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import User from "./models/user.model";
+
 dotenv.config();
 
 const uri = process.env.MONGODB_URI;
@@ -17,17 +17,16 @@ export const connectDB = async (): Promise<void> => {
 };
 
 export const createAdminUser = async () => {
-  const adminExists = await User.findOne({ email: "admin@example.com" });
+  const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL });
   if (!adminExists) {
     const admin = new User({
       firstName: "Admin",
       lastName: "01",
-      email: "admin@example.com",
-      password: "admin1234",
-      isAdmin: true
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASSWORD,
+      isAdmin: true,
     });
     await admin.save();
     console.log(`✅ Admin créé : ${admin.email}`);
   }
 };
-

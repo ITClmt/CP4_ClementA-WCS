@@ -184,7 +184,8 @@ const deleteAppointment: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    const hasAccessRights = req.user?.email === appointment?.clientEmail;
+    const hasAccessRights =
+      req.user?.isAdmin || req.user?.email === appointment?.clientEmail;
 
     if (!hasAccessRights) {
       res.status(403).json({ error: "Accès refusé" });
@@ -206,8 +207,7 @@ const deleteUserAppointments: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    const hasAccessRights =
-      req.user?.isAdmin || req.user?.email === appointment?.clientEmail;
+    const hasAccessRights = req.user?.email === appointment?.clientEmail;
 
     if (!hasAccessRights) {
       res.status(403).json({ error: "Accès refusé" });
