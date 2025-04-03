@@ -54,7 +54,7 @@ export default function DashboardUser() {
           Se déconnecter
         </button>
       </div>
-      <div className="flex justify-center items-center gap-4 mt-10">
+      <div className="flex justify-center items-center gap-4 mt-10 sm:flex-row flex-col">
         <article className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold text-center">
             Prendre un rendez-vous

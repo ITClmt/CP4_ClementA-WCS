@@ -35,6 +35,7 @@ export default function EditAppointmentModal({
     }
     return "";
   });
+
   const revalidate = useRevalidator();
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
