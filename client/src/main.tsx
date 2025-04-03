@@ -13,6 +13,9 @@ import App from "./App";
 
 // import About from "./pages/About";
 // import Contact from "./pages/Contact";
+import DashboardUser from "./pages/DashboardUser";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 
 /* ************************************************************************* */
 
@@ -22,6 +25,20 @@ const router = createBrowserRouter([
   {
     path: "/", // The root path
     element: <App />, // Renders the App component for the home page
+    children: [
+      {
+        path: "/",
+        element: <HomePage />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/dashboard/user",
+        element: <DashboardUser />,
+      },
+    ],
   },
   // Try adding a new route! For example, "/about" with an About component
 ]);
