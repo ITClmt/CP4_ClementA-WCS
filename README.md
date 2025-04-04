@@ -1,7 +1,7 @@
 # Projet de Prise de Rendez-vous
 
 Ce projet a été réalisé dans le cadre de la formation à la Wild Code School, lors du checkpoint 4. L'objectif était de créer une application full-stack en deux jours, avec au minimum un CRUD côté back-end.
-
+[LIVE DEMO](https://appointment-manager-front.vercel.app/)
 ## Description du Projet
 
 Le projet est un site fictif permettant de prendre des rendez-vous. Il inclut également une partie administrateur pour gérer les rendez-vous. 
