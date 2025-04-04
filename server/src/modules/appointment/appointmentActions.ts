@@ -36,7 +36,7 @@ const createAppointment: RequestHandler = async (req, res, next) => {
     if (existingAppointment) {
       res.status(400).json({
         error:
-          "Un rendez-vous existe déjà à cette date. Veuillez choisir une autre heure ou.",
+          "Un rendez-vous existe déjà à cette date. Veuillez choisir une autre heure ou une autre date.",
       });
       return;
     }

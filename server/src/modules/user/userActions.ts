@@ -2,6 +2,8 @@ import type { RequestHandler } from "express";
 import User from "../../../database/models/user.model";
 import jwt from "jsonwebtoken";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const createUser: RequestHandler = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -34,12 +36,12 @@ const createUser: RequestHandler = async (req, res, next) => {
     });
 
     res
-      .cookie("CP4auth", token, {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 31536000000,
-      })
+        .cookie("CP4auth", token, {
+          httpOnly: true,
+          sameSite: isProduction ? "none" : "lax",
+          secure: isProduction,
+          maxAge: 31536000000, // 1 an
+        })
       .json({
         message: "Inscription réussie",
         id: user._id,
@@ -76,15 +78,17 @@ const loginUser: RequestHandler = async (req, res, next) => {
         );
       }
 
+      
+
       const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
         expiresIn: "1y",
       });
       res
         .cookie("CP4auth", token, {
           httpOnly: true,
-          sameSite: "strict",
-          secure: process.env.NODE_ENV === "production",
-          maxAge: 31536000000,
+          sameSite: isProduction ? "none" : "lax",
+          secure: isProduction,
+          maxAge: 31536000000, // 1 an
         })
         .json({
           message: "Connexion réussie",

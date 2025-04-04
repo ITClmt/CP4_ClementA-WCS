@@ -10,19 +10,43 @@ export default function LoginForm() {
     email: "",
     password: "",
   });
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    const response = await api.loginUser(loginData.email, loginData.password);
-    setCurrentUser({
-      id: response.id,
-      email: response.email,
-      firstName: response.firstName,
-      lastName: response.lastName,
-      isAdmin: response.isAdmin,
-    });
-    navigate("/dashboard/user");
+    try {
+      e.preventDefault();
+      setIsLoading(true);
+      const response = await api.loginUser(loginData.email, loginData.password);
+      setCurrentUser({
+        id: response.id,
+        email: response.email,
+        firstName: response.firstName,
+        lastName: response.lastName,
+        isAdmin: response.isAdmin,
+      });
+      navigate("/dashboard/user");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Une erreur est survenue");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="flex flex-row gap-2">
+          <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce" />
+          <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.3s]" />
+          <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]" />
+        </div>
+      </>
+    );
+  }
 
   return (
     <article className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl shadow-lg">
@@ -43,6 +67,9 @@ export default function LoginForm() {
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="space-y-4 rounded-md">
+          {error && (
+            <div className="bg-red-500 text-white p-2 rounded-md">{error}</div>
+          )}
           <div>
             <label htmlFor="email" className="sr-only">
               Adresse email

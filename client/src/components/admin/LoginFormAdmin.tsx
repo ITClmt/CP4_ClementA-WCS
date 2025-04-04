@@ -10,9 +10,11 @@ export default function LoginFormAdmin() {
     email: "",
     password: "",
   });
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await api.loginAdmin(
         loginData.email,
@@ -25,11 +27,30 @@ export default function LoginFormAdmin() {
         lastName: response.lastName,
         isAdmin: response.isAdmin,
       });
+
       navigate("/dashboard/admin");
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Une erreur est survenue");
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Une erreur est survenue");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="flex flex-row gap-2">
+          <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce" />
+          <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.3s]" />
+          <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]" />
+        </div>
+      </>
+    );
+  }
 
   return (
     <article className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl shadow-lg">
@@ -48,6 +69,9 @@ export default function LoginFormAdmin() {
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="space-y-4 rounded-md">
+          {error && (
+            <div className="bg-red-500 text-white p-2 rounded-md">{error}</div>
+          )}
           <div>
             <label htmlFor="email" className="sr-only">
               Adresse email

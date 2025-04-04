@@ -62,6 +62,7 @@ const router = createBrowserRouter([
           const appointments = await api.getAppointments();
           return appointments;
         },
+        errorElement: <Navigate to="/dashboard/admin" />,
       },
     ],
   },

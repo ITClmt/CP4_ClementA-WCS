@@ -26,15 +26,17 @@ const loginAdmin: RequestHandler = async (req, res, next) => {
         );
       }
 
+      const isProduction = process.env.NODE_ENV === "production";
+
       const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
         expiresIn: "1y",
       });
       res
         .cookie("CP4auth", token, {
           httpOnly: true,
-          sameSite: "strict",
-          secure: process.env.NODE_ENV === "production",
-          maxAge: 31536000000,
+          sameSite: isProduction ? "none" : "lax",
+          secure: isProduction, // true en prod, false en dev
+          maxAge: 31536000000, // 1 an
         })
         .json({
           message: "Connexion réussie",

@@ -24,8 +24,10 @@ app.use(cookieParser());
 
 import cors from "cors";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 if (process.env.CLIENT_URL != null) {
-  app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
+  app.use(cors({ origin: isProduction ? process.env.CLIENT_URL_VERCEL : process.env.CLIENT_URL, credentials: true, allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie"] }));
 }
 
 // If you need to allow extra origins, you can add something like this:

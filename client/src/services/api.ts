@@ -16,6 +16,9 @@ const loginUser = async (email: string, password: string) => {
     );
     return response.data;
   } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
     throw new Error("Failed to login");
   }
 };
@@ -52,6 +55,9 @@ const signupUser = async (
     );
     return response.data;
   } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
     throw new Error("Failed to signup");
   }
 };
